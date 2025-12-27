@@ -6,7 +6,10 @@
 #define FS_FILE 0
 #define FS_FOLDER 1
 #define MAX_NODES 100
+
+#ifndef NULL
 #define NULL ((void*)0)
+#endif
 
 typedef struct FS_node {
     char name[32];
@@ -26,28 +29,57 @@ typedef struct FS_node {
     void* content;
 } FS_node;
 
-FS_node node_pool[MAX_NODES];
-int node_count = 0;
+extern FS_node node_pool[MAX_NODES];
+extern int node_count;
 
 /**
- * @brief allocates a new filesystem node
- * @return an FS_node pointer for an empty node
+ * @brief Converts a Node Pointer to its ID (Array Index)
+ */
+int fs_get_id_from_node(FS_node* node);
+
+/**
+ * @brief Converts an ID (Array Index) back to a Node Pointer
+ */
+FS_node* fs_get_node_from_id(int id);
+
+/**
+ * @brief Allocates a new filesystem node
+ * @return Returns an FS_node pointer for an empty node
  */
 FS_node* alloc_node();
 
 /**
- * @brief readying filesystem for new directories
+ * @brief Readying filesystem for new directories
  */
 void fs_initialize();
 
 /**
- * @brief Returns the buffer for the content of a file node
+ * @brief Creates a new directory/folder
+ * 
+ * @param parent Parent of the new directory/folder
+ * @param dir_name Name of the new directory/folder
+ * @return Returns the pointer to the new directory
+ */
+FS_node* new_dir(FS_node* parent, char* dir_name);
+
+/**
+ * @brief Creates a new file inside the parent folder
+ * 
+ * @param parent 
+ * @param file_name 
+ * @param content_buffer 
+ * @return FS_node* 
+ */
+FS_node* new_file(FS_node* parent, char* file_name, void* content_buffer);
+
+/**
+ * @brief Returns the node of the file specified by the filename
  * 
  * @param parent The parent folder of the file
  * @param filename The name of the file
  * @return Returns a pointer to the content buffer pointer of the file. Returns NULL if file not found
  */
-void* get_file_content(FS_node* parent, char* filename);
+FS_node* get_file_node(FS_node* parent, char* filename);
 
 
 #endif
