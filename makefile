@@ -8,14 +8,22 @@ CC = clang
 # -Wl,--export=...: Explicitly export the functions JavaScript needs
 # -Wl,--allow-undefined: Allow symbols to be unresolved (useful during dev, remove for strictness)
 CFLAGS = --target=wasm32 -O3 -nostdlib \
-	 -Wl,--no-entry \
-	 -Wl,--export=greetings \
-	 -Wl,--export=set_system_memory \
-	 -Wl,--export=get_frame \
-	 -Wl,--allow-undefined \
-	 -Wall -Wextra \
-	 -Wl,--initial-memory=131072 \
-	 -I src
+     -Wl,--no-entry \
+	 -Wl,--export=get_g_input_buffer \
+     -Wl,--export=get_frame \
+     -Wl,--export=set_window_width \
+     -Wl,--export=set_window_height \
+     -Wl,--export=set_terminal \
+     -Wl,--export=set_system_memory \
+     -Wl,--export=set_system_cores \
+     -Wl,--export=set_system_ram \
+     -Wl,--export=set_memory_usage \
+     -Wl,--export=set_system_battery \
+     -Wl,--export=set_locale \
+     -Wl,--allow-undefined \
+     -Wall -Wextra \
+     -Wl,--initial-memory=131072 \
+     -I src
 
 # --- Paths ---
 SOURCE_DIR = src
@@ -23,11 +31,13 @@ OUTPUT_DIR = public
 TARGET = $(OUTPUT_DIR)/kernel.wasm
 
 # List all your C source files here
+# Added shell.c so the command logic is included in the build
 SRC = $(SOURCE_DIR)/kernel.c \
       $(SOURCE_DIR)/filesystem.c \
       $(SOURCE_DIR)/neofetch.c \
       $(SOURCE_DIR)/session.c \
-      $(SOURCE_DIR)/utils.c
+      $(SOURCE_DIR)/utils.c \
+      $(SOURCE_DIR)/shell.c
 
 # --- Rules ---
 
