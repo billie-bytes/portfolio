@@ -48,6 +48,19 @@ unsigned int rand_range(unsigned int max){
     return rand() % max;
 }
 
+void string_add(char* buffer, const char* string){
+    int i = 0;
+    while(buffer[i]!='\0'){
+        i++;
+    }
+    int j = 0;
+    while(string[j]!='\0'){
+        buffer[i] = string[j];
+        i++; j++;
+    }
+    buffer[i] = '\0';
+}
+
 int atoi(const char* string){
     int i = 0;
     int sign = 1;
@@ -67,15 +80,36 @@ int atoi(const char* string){
     return number*sign;
 }
 
-void string_add(char* buffer, const char* string){
-    int i = 0;
-    while(buffer[i]!='\0'){
-        i++;
+void itoa(char* buffer, int number){
+    char temp[32];
+    temp [31] = '\0';
+    int i = 30;
+
+    if(number == 0){
+        temp[i] = '0';
+        i--;
     }
-    int j = 0;
-    while(string[j]!='\0'){
-        buffer[i] = string[j];
-        i++; j++;
+
+    bool negative = FALSE;
+    unsigned int unsigned_val;
+    if (number < 0){
+        negative = TRUE;
+        unsigned_val = (unsigned int)(0 - number); 
+    } 
+    else{
+        unsigned_val = (unsigned int)number;
     }
-    buffer[i] = '\0';
+
+    while(unsigned_val > 0){
+        temp[i] = (char)('0'+(unsigned_val%10));
+        unsigned_val /= 10;
+        i--;
+    }
+
+    if(negative){
+        temp[i] = '-';
+        i--;
+    }
+
+    string_add(buffer, &temp[i+1]);
 }

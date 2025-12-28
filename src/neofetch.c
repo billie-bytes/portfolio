@@ -98,9 +98,9 @@ void set_system_net(int mbps){sys_net_speed = mbps;}
 
 const char* username = "billie-bytes@portfolio\n";
 const char* OS = "BytesOS v1.6.7\n";
-const char* host = "Chromium\n";
-const char* kernel = "6.7.0-69-generic\n";
-const char* shell = "bash 6.7.1\n";
+const char* host = "Ouran Host Club\n";
+const char* kernel = "6.7.0-69-unique\n";
+const char* shell = "bush 6.7.1\n";
 char* get_frame(){
 
 }

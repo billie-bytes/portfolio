@@ -1,6 +1,18 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+
+typedef int bool;
 /**
  * @brief compares two strings
  * 
@@ -49,6 +61,15 @@ unsigned int rand();
  */
 unsigned int rand_range(unsigned int max);
 
+
+/**
+ * @brief Adds two strings together into the buffer
+ * 
+ * @param buffer This acts as string 1 and as the buffer where the new added string is stored
+ * @param string The string 2 that is added to the string 1 in the buffer
+ */
+void string_add(char* buffer, const char* string);
+
 /**
  * @brief Converts a string representing a number into an integer
  * 
@@ -58,12 +79,12 @@ unsigned int rand_range(unsigned int max);
 int atoi(const char* string);
 
 /**
- * @brief Adds two strings together into the buffer
+ * @brief Turns a number into a string and add it to a buffer. If buffer is not empty will concatenate the new string in the buffer.
  * 
- * @param buffer This acts as string 1 and as the buffer where the new added string is stored
- * @param string The string 2 that is added to the string 1 in the buffer
+ * @param buffer The buffer where the converted string is stored or concatenated
+ * @param number The number that is going to be converted into string
  */
-void string_add(char* buffer, const char* string);
+void itoa(char* buffer, int number);
 
 #endif
 
