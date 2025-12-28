@@ -3,8 +3,8 @@
 
 #include "utils.h"
 
-#define FS_FILE 0
-#define FS_FOLDER 1
+#define FS_FILE 6767
+#define FS_FOLDER 420
 #define MAX_NODES 100
 
 #ifndef NULL
@@ -29,8 +29,6 @@ typedef struct FS_node {
     void* content;
 } FS_node;
 
-extern FS_node node_pool[MAX_NODES];
-extern int node_count;
 
 /**
  * @brief Converts a Node Pointer to its ID (Array Index)
@@ -80,6 +78,20 @@ FS_node* new_file(FS_node* parent, char* file_name, void* content_buffer);
  * @return Returns a pointer to the content buffer pointer of the file. Returns NULL if file not found
  */
 FS_node* get_file_node(FS_node* parent, char* filename);
+
+/**
+ * @brief Get the number of used node
+ * 
+ * @return Returns the number of used nodes
+ */
+int get_node_count();
+
+/**
+ * @brief Get the nodes that are files (in this files are assumed to be packages/programs)
+ * 
+ * @return Returns the number of files
+ */
+int get_file_count();
 
 
 #endif

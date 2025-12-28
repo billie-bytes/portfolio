@@ -1,3 +1,22 @@
+function updateMemoryUsage() {
+    let usedBytes = 0;
+
+    // Check if the non-standard Chrome API exists
+    if (window.performance && window.performance.memory) {
+        usedBytes = window.performance.memory.usedJSHeapSize;
+    } else {
+        // Fallback for Firefox/Safari (Simulate it or show N/A)
+        usedBytes = 50 * 1024 * 1024; // Fake 50MB
+    }
+
+    // CALL THE C FUNCTION
+    // Implementation depends on how you compiled (Emscripten example below):
+    // _set_system_memory is the C function name (often prefixed with _)
+    Module._set_system_memory(usedBytes);
+}
+
+setInterval(updateMemoryUsage, 1000);
+
 async function boot() {
     const response = await fetch('kernel.wasm');
     const buffer = await response.arrayBuffer();

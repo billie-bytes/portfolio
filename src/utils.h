@@ -27,5 +27,43 @@ int strcpy(const char* src, char* dst);
  */
 int strlen(const char* str);
 
+/**
+ * @brief Changes the seed of the RNG
+ * 
+ * @param seed The new seed
+ */
+void srand(unsigned int seed);
+
+/**
+ * @brief Generates a random unsigned integer
+ * 
+ * @return Returns an unsigned integer
+ */
+unsigned int rand();
+
+/**
+ * @brief 
+ * 
+ * @param max 
+ * @return Returns an unsigned int that is less than max
+ */
+unsigned int rand_range(unsigned int max);
+
+/**
+ * @brief Converts a string representing a number into an integer
+ * 
+ * @param string 
+ * @return The converted string into an integer
+ */
+int atoi(const char* string);
+
+/**
+ * @brief Adds two strings together into the buffer
+ * 
+ * @param buffer This acts as string 1 and as the buffer where the new added string is stored
+ * @param string The string 2 that is added to the string 1 in the buffer
+ */
+void string_add(char* buffer, const char* string);
+
 #endif
 

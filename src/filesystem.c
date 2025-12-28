@@ -85,3 +85,17 @@ FS_node* get_file_node(FS_node* parent, char* filename){
     }
     return NULL;
 }
+
+int get_node_count(){
+    return node_count;
+}
+
+int get_file_count(){
+    int file_nums = 0;
+    for(int i = 0; i<node_count; i++){
+        if(node_pool[i].type==FS_FILE){
+            ++file_nums;
+        }
+    }
+    return file_nums;
+}
