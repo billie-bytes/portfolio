@@ -6,10 +6,20 @@ const char* SAFE_CHARS = "!&()+/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY]^abcd
 const int SAFE_LEN = 80;
 
 // Variables accessed by Javascript
-static int current_tab_memory_usage = 0;
+static int res_width = 1920;
+static int res_height = 1080;
+static char terminal[32] = "0x43-Jawa-Terminal";
 static int sys_cores = 1;
 static int sys_ram_gb = 4;
-static int sys_net_speed = 0;
+static int current_tab_memory_usage = 0;
+static int battery = 67;
+static char sys_locale[32] = "en_AG.UTF-8";
+
+
+// Variables not set by Javascript
+static int disk = 4*sizeof(FS_node); //Placeholder, will be changed after putting in the portfolio content
+static int max_disk = MAX_NODES*sizeof(FS_node);
+static int packages = 5; //Also placeholder
 
 static char logo_mask[ROW_LENGTH][COL_LENGTH] = {
     "1111111000000001111111110",
@@ -81,17 +91,34 @@ static void init_mask(){
  */
 static void generate_random_square(){
     for(int i = 0; i<ROW_LENGTH; i++){
-        for(int j = 0; i<COL_LENGTH; j++){
+        for(int j = 0; j<COL_LENGTH; j++){
             random_square[i][j] = SAFE_CHARS[rand_range(80)];
         }
     }
 }
 
+static char frame_buffer[4096];
+static int initialized = TRUE;
+
+void ensure_initialized() {
+    if (!initialized) {
+        init_mask();
+        initialized = TRUE;
+    }
+}
+
+
 /*====== API's for Javascript ======*/
+/*Remember to keep these alive using Makefile!!!!*/
+void set_window_width(int width){res_width = width;}
+void set_window_height(int height){res_height = height;}
+void set_terminal(char* new_terminal){strcpy(new_terminal, terminal);}
 void set_system_memory(int bytes){current_tab_memory_usage = bytes;}
 void set_system_cores(int cores){sys_cores = cores;}
 void set_system_ram(int gb){sys_ram_gb = gb;}
-void set_system_net(int mbps){sys_net_speed = mbps;}
+void set_memory_usage(int memory){current_tab_memory_usage = memory;}
+void set_system_battery(int sbattery){battery = sbattery;}
+void set_locale(char* new_locale){strcpy(new_locale, sys_locale);}
 
 
 
@@ -102,5 +129,97 @@ const char* host = "Ouran Host Club\n";
 const char* kernel = "6.7.0-69-unique\n";
 const char* shell = "bush 6.7.1\n";
 char* get_frame(){
+    ensure_initialized();
+    generate_random_square_fixed();
+    
+    // Clear buffer
+    frame_buffer[0] = '\0';
+    
+    char num_buf[32]; // Buffer for itoa
 
+    for(int i = 0; i < ROW_LENGTH; i++){
+        //Logo Segment
+        for(int j = 0; j < COL_LENGTH; j++){
+            char c[2];
+            c[1] = '\0';
+            if(mask[i][j]) {
+                c[0] = random_square[i][j];
+            } else {
+                c[0] = ' ';
+            }
+            string_add(frame_buffer, c);
+        }
+
+        string_add(frame_buffer, "   ");
+        switch(i) {
+            case 0: 
+                string_add(frame_buffer, username); 
+                break;
+            case 1: 
+                string_add(frame_buffer, "----------------------\n"); 
+                break;
+            case 2: 
+                string_add(frame_buffer, OS); 
+                break;
+            case 3: 
+                string_add(frame_buffer, host); 
+                break;
+            case 4: 
+                string_add(frame_buffer, kernel); 
+                break;
+            case 5: 
+                string_add(frame_buffer, "Uptime: ");
+                itoa(num_buf, 0); // Placeholder: No tick system provided in utils yet
+                string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, "s\n");
+                break;
+            case 6: 
+                string_add(frame_buffer, "Packages: ");
+                itoa(num_buf, get_file_count());
+                string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, " (dpkg)\n");
+                break;
+            case 7: 
+                string_add(frame_buffer, shell); 
+                break;
+            case 8: 
+                string_add(frame_buffer, "Resolution: ");
+                itoa(num_buf, res_width); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, "x");
+                itoa(num_buf, res_height); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, "\n");
+                break;
+            case 9: 
+                string_add(frame_buffer, "Terminal: ");
+                string_add(frame_buffer, terminal);
+                string_add(frame_buffer, "\n");
+                break;
+            case 10:
+                string_add(frame_buffer, "CPU: ");
+                itoa(num_buf, sys_cores); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, " Cores\n");
+                break;
+            case 11:
+                string_add(frame_buffer, "Memory: ");
+                itoa(num_buf, current_tab_memory_usage / 1024 / 1024); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, "MB / ");
+                itoa(num_buf, sys_ram_gb * 1024); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, "MB\n");
+                break;
+            case 12:
+                string_add(frame_buffer, "Disk: ");
+                itoa(num_buf, get_node_count()); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, " / ");
+                itoa(num_buf, MAX_NODES); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, " (Nodes)\n");
+                break;
+            case 13:
+                string_add(frame_buffer, "Battery: ");
+                itoa(num_buf, battery); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, "%\n");
+                break;
+        }
+    }
+    
+    return frame_buffer;
 }

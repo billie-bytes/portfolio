@@ -70,6 +70,7 @@ unsigned int rand_range(unsigned int max);
  */
 void string_add(char* buffer, const char* string);
 
+
 /**
  * @brief Converts a string representing a number into an integer
  * 
