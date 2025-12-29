@@ -20,6 +20,7 @@ CFLAGS = --target=wasm32 -O3 -nostdlib \
      -Wl,--export=set_memory_usage \
      -Wl,--export=set_system_battery \
      -Wl,--export=set_locale \
+     -Wl,--export=set_uptime \
      -Wl,--allow-undefined \
      -Wall -Wextra \
      -Wl,--initial-memory=131072 \

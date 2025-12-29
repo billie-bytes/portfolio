@@ -11,7 +11,7 @@
 #define FALSE 0
 #endif
 
-
+typedef unsigned long size_t;
 typedef int bool;
 /**
  * @brief compares two strings
@@ -29,7 +29,7 @@ int streq(const char* str1, const char* str2);
  * @param dst buffer of the copied string location
  * @return returns 1 if success
  */
-int strcpy(const char* src, char* dst);
+int strcopy(const char* src, char* dst);
 
 /**
  * @brief Calculates the length of a string
@@ -37,7 +37,7 @@ int strcpy(const char* src, char* dst);
  * @param str The string to be calcualted
  * @return The length of the string
  */
-int strlen(const char* str);
+int strleng(const char* str);
 
 /**
  * @brief Changes the seed of the RNG
@@ -86,6 +86,18 @@ int atoi(const char* string);
  * @param number The number that is going to be converted into string
  */
 void itoa(char* buffer, int number);
+
+
+/**
+ * @brief Sets the first num bytes of the block of memory pointed by ptr to the specified value
+ */
+void* memset(void* ptr, int value, size_t num);
+
+
+/**
+ * @brief Copies num bytes from src to dst
+ */
+void* memcpy(void* dst, const void* src, size_t num);
 
 #endif
 

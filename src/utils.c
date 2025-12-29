@@ -10,7 +10,7 @@ int streq(const char* str1, const char* str2){
     else return 1;
 }
 
-int strcpy(const char* src, char* dst){
+int strcopy(const char* src, char* dst){
     int i = 0;
     while(src[i]!='\0'){
         dst[i] = src[i];
@@ -20,7 +20,7 @@ int strcpy(const char* src, char* dst){
     return 1;
 }
 
-int strlen(const char* str){
+int strleng(const char* str){
     int i = 0;
     while (str[i] != '\0') {
         i++;
@@ -50,13 +50,15 @@ unsigned int rand_range(unsigned int max){
 
 void string_add(char* buffer, const char* string){
     int i = 0;
-    while(buffer[i]!='\0'){
+    while(buffer[i] != '\0') {
         i++;
     }
+    
     int j = 0;
-    while(string[j]!='\0'){
+    while(string[j] != '\0'){
         buffer[i] = string[j];
-        i++; j++;
+        i++; 
+        j++;
     }
     buffer[i] = '\0';
 }
@@ -82,34 +84,48 @@ int atoi(const char* string){
 
 void itoa(char* buffer, int number){
     char temp[32];
-    temp [31] = '\0';
-    int i = 30;
+    int i = 0;
 
-    if(number == 0){
-        temp[i] = '0';
-        i--;
+    if (number == 0) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+        return;
     }
 
-    bool negative = FALSE;
-    unsigned int unsigned_val;
-    if (number < 0){
-        negative = TRUE;
-        unsigned_val = (unsigned int)(0 - number); 
-    } 
-    else{
-        unsigned_val = (unsigned int)number;
+    int n = number;
+    if (number < 0) n = -number;
+
+    while (n > 0) {
+        temp[i++] = (n % 10) + '0';
+        n /= 10;
     }
 
-    while(unsigned_val > 0){
-        temp[i] = (char)('0'+(unsigned_val%10));
-        unsigned_val /= 10;
-        i--;
-    }
+    if (number < 0) temp[i++] = '-';
 
-    if(negative){
-        temp[i] = '-';
-        i--;
-    }
+    temp[i] = '\0';
 
-    string_add(buffer, &temp[i+1]);
+    int buf_len = 0;
+    while(buffer[buf_len] != '\0') buf_len++;
+
+    for (int j = 0; j < i; j++) {
+        buffer[buf_len++] = temp[i - 1 - j];
+    }
+    buffer[buf_len] = '\0';
+}
+
+void* memset(void* ptr, int value, size_t num){
+    unsigned char* p = (unsigned char*)ptr;
+    for(size_t i = 0; i < num; i++){
+        p[i] = (unsigned char)value;
+    }
+    return ptr;
+}
+
+void* memcpy(void* dst, const void* src, size_t num){
+    unsigned char* d = (unsigned char*)dst;
+    const unsigned char* s = (const unsigned char*)src;
+    for(size_t i = 0; i < num; i++){
+        d[i] = s[i];
+    }
+    return dst;
 }

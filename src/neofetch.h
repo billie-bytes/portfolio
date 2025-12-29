@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include "filesystem.h"
+#include "text_styling.h"
 
 #ifndef TRUE
 #define TRUE 1
@@ -12,10 +13,8 @@
 #define FALSE 0
 #endif
 
-#define ROW_LENGTH 14
-#define COL_LENGTH 25
-
-extern int mask[ROW_LENGTH][COL_LENGTH];
+#define ROW_LENGTH 18
+#define COL_LENGTH 44
 
 /**
  * @brief Get the logo for each frame
