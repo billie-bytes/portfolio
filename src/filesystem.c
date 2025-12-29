@@ -22,7 +22,7 @@ FS_node* alloc_node() {
 
 void fs_initialize(){
     FS_node* root = alloc_node();
-    strcpy(".",root->name);
+    strcopy(".",root->name);
     root->next = NULL;
     root->next_inside = NULL;
     root->parent = root;
@@ -43,7 +43,7 @@ FS_node* new_dir(FS_node* parent, char* dir_name){
     
     if(last_node!=NULL) last_node->next = dir;
     else parent->next_inside = dir;
-    strcpy(dir_name, dir->name);
+    strcopy(dir_name, dir->name);
     dir->next = NULL;
     dir->next_inside = NULL;
     dir->parent = parent;
@@ -65,7 +65,7 @@ FS_node* new_file(FS_node* parent, char* file_name, void* content_buffer){
     FS_node* file = alloc_node();
     if(last_node!=NULL) last_node->next = file;
     else parent->next_inside = file;
-    strcpy(file_name,file->name);
+    strcopy(file_name,file->name);
     file->next = NULL;
     file->next_inside = NULL;
     file->parent = parent;
@@ -84,4 +84,18 @@ FS_node* get_file_node(FS_node* parent, char* filename){
         p = p->next;
     }
     return NULL;
+}
+
+int get_node_count(){
+    return node_count;
+}
+
+int get_file_count(){
+    int file_nums = 0;
+    for(int i = 0; i<node_count; i++){
+        if(node_pool[i].type==FS_FILE){
+            ++file_nums;
+        }
+    }
+    return file_nums;
 }

@@ -22,8 +22,6 @@ typedef struct Session {
     int is_active; //To know if this is the active terminal
 } Session;
 
-extern Session sessions[MAX_SESSIONS];
-extern int session_count;
 
 /**
  * @brief creates a new session starting from root

@@ -1,12 +1,44 @@
 # --- Configuration ---
 CC = clang
-CFLAGS = --target=wasm32 -O3 -nostdlib -Wl,--no-entry -Wl,--export-all -Wall -Wextra -Wl,--initial-memory=131072
+
+# Compiler Flags:
+# --target=wasm32: Target WebAssembly
+# -nostdlib: Don't link against standard libraries (we are baremetal)
+# -Wl,--no-entry: No main() function required
+# -Wl,--export=...: Explicitly export the functions JavaScript needs
+# -Wl,--allow-undefined: Allow symbols to be unresolved (useful during dev, remove for strictness)
+CFLAGS = --target=wasm32 -O3 -nostdlib \
+     -Wl,--no-entry \
+	 -Wl,--export=get_g_input_buffer \
+     -Wl,--export=get_frame \
+     -Wl,--export=set_window_width \
+     -Wl,--export=set_window_height \
+     -Wl,--export=set_terminal \
+     -Wl,--export=set_system_memory \
+     -Wl,--export=set_system_cores \
+     -Wl,--export=set_system_ram \
+     -Wl,--export=set_memory_usage \
+     -Wl,--export=set_system_battery \
+     -Wl,--export=set_locale \
+     -Wl,--export=set_uptime \
+     -Wl,--allow-undefined \
+     -Wall -Wextra \
+     -Wl,--initial-memory=131072 \
+     -I src
 
 # --- Paths ---
 SOURCE_DIR = src
 OUTPUT_DIR = public
 TARGET = $(OUTPUT_DIR)/kernel.wasm
-SRC = $(SOURCE_DIR)/kernel.c
+
+# List all your C source files here
+# Added shell.c so the command logic is included in the build
+SRC = $(SOURCE_DIR)/kernel.c \
+      $(SOURCE_DIR)/filesystem.c \
+      $(SOURCE_DIR)/neofetch.c \
+      $(SOURCE_DIR)/session.c \
+      $(SOURCE_DIR)/utils.c \
+      $(SOURCE_DIR)/shell.c
 
 # --- Rules ---
 
@@ -16,7 +48,7 @@ all: $(TARGET)
 $(TARGET): $(SRC)
 	@echo "Creating output directory..."
 	mkdir -p $(OUTPUT_DIR)
-	@echo "Compiling Kernel..."
+	@echo "Compiling Kernel with all modules..."
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
 	@echo "Build successful! Binary placed in $(OUTPUT_DIR)/"
 

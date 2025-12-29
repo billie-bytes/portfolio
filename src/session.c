@@ -23,7 +23,6 @@ void session_initialize(){
     new_session();
 }
 
-
 Session* get_active_session(){
     for(int i = 0; i<MAX_SESSIONS; i++){
         if(sessions[i].is_active){
