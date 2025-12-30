@@ -1,14 +1,17 @@
 #ifndef SHELL_H
 #define SHELL_H
 
+#define MAX_ARGS 6
+
+
 #include "session.h"
 
+
 /**
- * @brief Get the shell output because its stored as a string buffer
- * 
- * @return Returns a pointer to the start of the string (similar to)
+ * @brief Prints out general help and commands  
  */
-char* get_shell_output();
+void cmd_help();
+
 /**
  * @brief Lists all the files and folder inside the current working directory
  * 
@@ -40,6 +43,14 @@ int cmd_pwd(Session current_session);
  * 
  * @return 0 if success
  */
-int cmd_whoami();
+void cmd_whoami();
+
+/**
+ * @brief Changes the addressed viewed by hexdump
+ * 
+ * @param address 
+ * @return 0 Success, 1 invalid address
+ */
+int cmd_chxdmp(int address);
 
 #endif

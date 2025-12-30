@@ -1,5 +1,6 @@
 let memory;             // For accessing WASM memory buffer
 let get_g_input_buffer; // The specific C function to get the input pointer
+let init_system;        // C function to initialize the C backend
 const Module = {};      // The object for mapping C exports
 let batteryManager = null;
 
@@ -15,6 +16,7 @@ let historyIndex = -1;
 
 
 const memoryPanel = document.getElementById('status-panel-2'); // Your 3rd panel
+
 
 
 
@@ -44,16 +46,31 @@ function writeStringToMemory(str) {
 
 function parseAnsiColors(str) {
     let safeStr = str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    safeStr = safeStr
-        .replace(/~r~/g, '<span style="color: #ff5555">') // Red
-        .replace(/~g~/g, '<span style="color: #ff5555">') // Green
-        .replace(/~y~/g, '<span style="color: #ff5555">') // Yellow
-        .replace(/~b~/g, '<span style="color: #ff5555">') // Blue
-        .replace(/~m~/g, '<span style="color: #ff5555">') // Magenta
-        .replace(/~c~/g, '<span style="color: #ff5555">') // Cyan
-        .replace(/~#~/g, '</span>');                      // Reset
 
-    return safeStr;
+
+    const colorMap = {
+        '31': '#ff5555', 
+        '32': '#50fa7b', 
+        '33': '#f1fa8c', 
+        '34': '#bd93f9', 
+        '35': '#ffffffff',
+        '36': '#8be9fd', 
+        '90': '#6272a4',
+        '0':  'RESET'
+    };
+
+    return safeStr.replace(/\u001b\[(\d+)m/g, (match, code) => {
+        if (code === '0') {
+            return '</span>';
+        }
+        
+        const hex = colorMap[code];
+        if (hex) {
+            return `</span><span style="color: ${hex}">`;
+        }
+        
+        return '';
+    });
 }
 
 // SYSTEM STATS UPDATING
@@ -123,7 +140,7 @@ function renderNeofetchLoop() {
 }
 
 function renderHexDump() {
-    const startOffset = get_g_input_buffer(); 
+    const startOffset = get_hexdump_ptr(); 
     const panelHeight = memoryPanel.clientHeight;
     const rowHeight = 12; 
     const availableRows = Math.floor((panelHeight - 30) / rowHeight);
@@ -132,7 +149,7 @@ function renderHexDump() {
     const memoryView = new Uint8Array(memory.buffer);
     
     let html = '<div class="hex-grid" style="font-family: monospace; font-size: 10px; line-height: 1.15;">';
-    html += '<div style="color: #888; margin-bottom: 5px; font-weight:bold;">LIVE MEMORY DUMP (INPUT BUFFER)</div>';
+    html += '<div style="color: #888; margin-bottom: 5px; font-weight:bold;">LIVE MEMORY DUMP</div>';
     
     for (let i = 0; i < length; i += 16) {
         let rowHtml = `<span style="color: #555">0x${(startOffset + i).toString(16).padStart(4, '0').toUpperCase()}: </span>`;
@@ -194,7 +211,7 @@ function renderClock() {
 function appendToTerminal(text, isCommand = false) {
     const div = document.createElement('div');
     if (isCommand) {
-         div.innerHTML = `<span class="prompt">billie-bytes@portfolio:~$</span> ${text}`;
+         div.innerHTML = `<span class="prompt">billie-bytes@portfolio:~$</span> <span style="color: #ffffffff">${text}</span>`;
     } else {
          // For now, simple text. Later we will use ANSI parser here too for ls colors
          div.textContent = text; 
@@ -218,13 +235,15 @@ async function handleCommand(cmd) {
     else if (Module._exec_cmd) {
         writeStringToMemory(trimmedCmd);
         Module._exec_cmd();
-        const outputPtr = Module._get_shell_output();
+        const outputPtr = get_g_output_buffer();
         const outputStr = readStringFromMemory(outputPtr);
         if(outputStr.length > 0) {
              // Using innerHTML here allows the C backend to send <br> or ANSI later
              const outDiv = document.createElement('div');
+             let formatted = parseAnsiColors(outputStr);
+             formatted = formatted.replace(/\n/g, '<br>');
              // For now, just handle newlines. Later apply parseAnsiColors here.
-             outDiv.innerHTML = outputStr.replace(/\n/g, '<br>'); 
+             outDiv.innerHTML = formatted;
              terminalOutputDiv.appendChild(outDiv);
         }
     } else {
@@ -235,7 +254,7 @@ async function handleCommand(cmd) {
     document.getElementById('terminal-main').scrollTop = terminalOutputDiv.scrollHeight;
 }
 
-// Event Listeners for Input
+
 terminalInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         const cmd = terminalInput.value;
@@ -276,7 +295,10 @@ async function boot() {
         const exports = instance.exports;
 
         memory = exports.memory;
-        get_g_input_buffer = exports.get_g_input_buffer; 
+        init_system = exports.init_system;
+        get_g_input_buffer = exports.get_g_input_buffer;
+        get_g_output_buffer = exports.get_g_output_buffer;
+        get_hexdump_ptr = exports.get_hexdump_ptr;
 
 
         Module._set_window_width = exports.set_window_width;
@@ -292,9 +314,9 @@ async function boot() {
         
 
         Module._exec_cmd = exports.exec_cmd;
-        Module._get_shell_output = exports.get_shell_output;
 
         // Initialize System Data
+        init_system();
         updateOnceStats(); 
         await initBattery();
         updateBatteryStats();

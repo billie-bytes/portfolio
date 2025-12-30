@@ -1,4 +1,5 @@
 #include "filesystem.h"
+#include "utils.h"
 
 FS_node node_pool[MAX_NODES];
 int node_count = 0;

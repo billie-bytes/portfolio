@@ -1,10 +1,6 @@
 #ifndef NEOFETCH_H
 #define NEOFETCH_H
 
-#include "utils.h"
-#include "filesystem.h"
-#include "text_styling.h"
-
 #ifndef TRUE
 #define TRUE 1
 #endif

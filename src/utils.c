@@ -1,6 +1,6 @@
 #include "utils.h"
 
-int streq(const char* str1, const char* str2){
+bool streq(const char* str1, const char* str2){
     int i = 0;
     while(str1[i] != '\0' && str2[i] != '\0'){
         if(str1[i]!=str2[i]) return 0;
@@ -8,6 +8,16 @@ int streq(const char* str1, const char* str2){
     }
     if(str1[i]!=str2[i]) return 0;
     else return 1;
+}
+
+bool strneq(const char* str1, const char* str2, int num){
+    int i = 0;
+    while(str1[i] != '\0' && str2[i] != '\0' && i<num){
+        if(str1[i]!=str2[i]) return 0;
+        ++i;
+    }
+    if(i==num) return 1;
+    else return 0;
 }
 
 int strcopy(const char* src, char* dst){
@@ -82,6 +92,30 @@ int atoi(const char* string){
     return number*sign;
 }
 
+unsigned int htoi(const char* str) {
+    unsigned int value = 0;
+    int i = 0;
+    
+    // Skip "0x"
+    if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+        i = 2;
+    }
+
+    while (str[i] != '\0') {
+        char c = str[i];
+        int digit;
+
+        if (c >= '0' && c <= '9') digit = c - '0';
+        else if (c >= 'a' && c <= 'f') digit = c - 'a' + 10;
+        else if (c >= 'A' && c <= 'F') digit = c - 'A' + 10;
+        else break; 
+
+        value = (value * 16) + digit;
+        i++;
+    }
+    return value;
+}
+
 void itoa(char* buffer, int number){
     char temp[32];
     int i = 0;
@@ -113,6 +147,41 @@ void itoa(char* buffer, int number){
     buffer[buf_len] = '\0';
 }
 
+void itoh(char* buffer, int number){
+    char temp[32];
+    int i = 0;
+    unsigned int n = (unsigned int)number; // Treat as unsigned for Hex
+
+    if (number == 0) {
+        int buf_len = 0;
+        while(buffer[buf_len] != '\0') buf_len++;
+        
+        buffer[buf_len++] = '0';
+        buffer[buf_len] = '\0';
+        return;
+    }
+
+    while (n > 0) {
+        int digit = n % 16;
+        if (digit < 10) {
+            temp[i++] = digit + '0';
+        } else {
+            temp[i++] = (digit - 10) + 'A';
+        }
+        n /= 16;
+    }
+
+    temp[i] = '\0';
+
+    int buf_len = 0;
+    while(buffer[buf_len] != '\0') buf_len++;
+
+    for (int j = 0; j < i; j++) {
+        buffer[buf_len++] = temp[i - 1 - j];
+    }
+    buffer[buf_len] = '\0';
+}
+
 void* memset(void* ptr, int value, size_t num){
     unsigned char* p = (unsigned char*)ptr;
     for(size_t i = 0; i < num; i++){
@@ -128,4 +197,12 @@ void* memcpy(void* dst, const void* src, size_t num){
         d[i] = s[i];
     }
     return dst;
+}
+
+char* get_next_word(char* str){
+    int i = 0;
+    while(str[i]!=' '&&str[i]!='\0') i++;
+    while(str[i]==' '&&str[i]!='\0') i++;
+    if(str[i]=='\0') return NULL;
+    else return &str[i];
 }

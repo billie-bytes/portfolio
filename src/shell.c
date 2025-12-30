@@ -1,15 +1,27 @@
 #include "shell.h"
 #include "filesystem.h"
 #include "utils.h"
+#include "text_styling.h"
+#define GLOBAL_BUFFER_SIZE 4096
 
-static char shell_buffer[4096];
+extern char g_output_buffer[GLOBAL_BUFFER_SIZE];
+extern char g_input_buffer[GLOBAL_BUFFER_SIZE];
+extern void* hexdump_ptr;
 
-char* get_shell_output() {
-    return shell_buffer;
+void cmd_help(){
+    g_output_buffer[0] = '\0';
+    string_add(g_output_buffer,"Available commands:\n");
+    string_add(g_output_buffer,C_WHITE"  help    "C_RESET"- Show this message\n");
+    string_add(g_output_buffer,C_WHITE"  clear   "C_RESET"- Clear the terminal\n");
+    string_add(g_output_buffer,C_WHITE"  whoami  "C_RESET"- Current user\n");
+    string_add(g_output_buffer,C_WHITE"  cd      "C_RESET"- Changes working directory\n");
+    string_add(g_output_buffer,C_WHITE"  ls      "C_RESET"- Lists files and directories in current working directory\n");
+    string_add(g_output_buffer,C_WHITE"  pwd     "C_RESET"- Prints current working directory\n");
+    string_add(g_output_buffer,C_WHITE"  chexdmp "C_RESET"- Changes the memory offset of the hexdump\n\n");
 }
 
 int cmd_ls(Session current_session) {
-    shell_buffer[0] = '\0';
+    g_output_buffer[0] = '\0';
     
     FS_node* cwd = fs_get_node_from_id(current_session.current_dir_id);
     if (cwd == NULL) return 1;
@@ -17,18 +29,18 @@ int cmd_ls(Session current_session) {
     FS_node* child = cwd->next_inside;
 
     while (child != NULL) {
-        string_add(shell_buffer, child->name);
+        string_add(g_output_buffer, child->name);
         if (child->type == FS_FOLDER) {
-            string_add(shell_buffer, "/");
+            string_add(g_output_buffer, "/");
         }
-        string_add(shell_buffer, "  ");
+        string_add(g_output_buffer, "  ");
         child = child->next;
     }
     return 0;
 }
 
 int cmd_cd(Session current_session, char* path) {
-    shell_buffer[0] = '\0';
+    g_output_buffer[0] = '\0';
 
     if (streq(path, ".")) {
         return 0;
@@ -52,14 +64,14 @@ int cmd_cd(Session current_session, char* path) {
     FS_node* target = get_file_node(cwd, path);
     
     if (target == NULL) {
-        string_add(shell_buffer, "cd: no such file or directory: ");
-        string_add(shell_buffer, path);
+        string_add(g_output_buffer, "cd: no such file or directory: ");
+        string_add(g_output_buffer, path);
         return 2;
     }
 
     if (target->type != FS_FOLDER) {
-        string_add(shell_buffer, "cd: not a directory: ");
-        string_add(shell_buffer, path);
+        string_add(g_output_buffer, "cd: not a directory: ");
+        string_add(g_output_buffer, path);
         return 1;
     }
 
@@ -72,7 +84,7 @@ int cmd_cd(Session current_session, char* path) {
 }
 
 int cmd_pwd(Session current_session) {
-    shell_buffer[0] = '\0';
+    g_output_buffer[0] = '\0';
     
     FS_node* cwd = fs_get_node_from_id(current_session.current_dir_id);
     if (cwd == NULL) return 1;
@@ -86,19 +98,47 @@ int cmd_pwd(Session current_session) {
         p = p->parent;
     }
 
-    string_add(shell_buffer, "/");
+    string_add(g_output_buffer, "/");
     for (int i = depth - 1; i >= 0; i--) {
-        string_add(shell_buffer, stack[i]->name);
+        string_add(g_output_buffer, stack[i]->name);
         if (stack[i]->type == FS_FOLDER && i > 0) {
-            string_add(shell_buffer, "/");
+            string_add(g_output_buffer, "/");
         }
     }
 
     return 0;
 }
 
-int cmd_whoami() {
-    shell_buffer[0] = '\0';
-    string_add(shell_buffer, "billie-bytes");
+void cmd_whoami() {
+    g_output_buffer[0] = '\0';
+    string_add(g_output_buffer, "billie-bytes");
+}
+
+
+int cmd_chxdmp(int address){
+    if(address<0){
+        return 1; //invalid address
+    }
+
+    hexdump_ptr = (void*)address;
+    g_output_buffer[0] = '\0';
+    char itoh_buff[16];
+    itoh_buff[0]='\0';
+    itoh(itoh_buff, address);
+    string_add(g_output_buffer, "Changed hex view address into "C_WHITE"0x");
+    string_add(g_output_buffer, itoh_buff);
+    string_add(g_output_buffer, "\n\n"C_RESET);
+    string_add(g_output_buffer, "Points of interest:\n"C_WHITE);
+    itoh_buff[0]='\0';
+    itoh(itoh_buff, (int)g_input_buffer);
+    string_add(g_output_buffer, itoh_buff);
+    string_add(g_output_buffer, C_RESET);
+    string_add(g_output_buffer, " (input buffer)\n");
+    itoh_buff[0]='\0';
+    itoh(itoh_buff, (int)g_output_buffer);
+    string_add(g_output_buffer,C_WHITE);
+    string_add(g_output_buffer, itoh_buff);
+    string_add(g_output_buffer, C_RESET);
+    string_add(g_output_buffer, " (output buffer)\n\n");
     return 0;
 }

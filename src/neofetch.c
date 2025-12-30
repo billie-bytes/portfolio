@@ -1,10 +1,12 @@
 #include "neofetch.h"
-
+#include "utils.h"
+#include "filesystem.h"
+#include "text_styling.h"
 
 char random_square[ROW_LENGTH][COL_LENGTH];
 const char* SAFE_CHARS = "!123456789:;<=>?@ACDEFGHIJKLMNOPQRSTUVWY]^acdefghijklmnopqrstuvwyz{|}";
 const int SAFE_LEN = 69;
-const char* COLORS[] = {C_RED, C_GREEN, C_YELLOW, C_BLUE, C_MAG, C_CYAN};
+const char* COLORS[] = {C_RED, C_GREEN, C_YELLOW, C_BLUE, C_WHITE};
 
 // Variables accessed by Javascript
 static int res_width = 1920;
@@ -33,12 +35,12 @@ static char logo_mask[ROW_LENGTH][COL_LENGTH+1] = {
 "M@@@@@@@M=             .    :+*@@@@@@@MM@@@@",
 "@@@@@@M#-                 .. :++@@@@@@#M@@@@",
 "@@@@@#M:                  ..  .:=@@@@@##M@@@",
-"@@@@@+-                   :*:   +M@@@@@**@@@",
+"@@@@@+-                   :*:   +M@@@@@MM@@@",
 "@@@@@@                    +=-+-..*@@@@@+#@@@",
-"@@@@@#            .       .:-**: +@@@M*+****",
-"@@@@@=           -+--: .-=:--::- :#M**+++++*",
-"@@@@M:          -MM#-.=*=@M#*: -.:#*++++++++",
-"@@@M-           .::-=+=-.+@+=#=::=#****###**",
+"@@@@@#            .       .:-**: +@@@MM+MMMM",
+"@@@@@=           -+--: .-=:--::- :#MMM+++++M",
+"@@@@M:          -MM#-.=*=@M#*: -.:#M++++++++",
+"@@@M-           .::-=+=-.+@+=#=::=#MMMM###MM",
 "@@@*.          -#+*:--.  =MM@@+  -MMM@@@MMMM",
 "@@#-           ..  --  .++M+#*M  -@@@@@@@@@@",
 "@+-.          .:-:     .-*@M#M- .=@@@@@@@@@@",
@@ -47,7 +49,7 @@ static char logo_mask[ROW_LENGTH][COL_LENGTH+1] = {
 "+-::          .: --@@@@@@@#.+-    *@@@@@@@@@",
 ":=++-          .:#M#@@@@@@M:++  .*#@@@@@@@@@",
 "#..=:::      ..  =@@@@@#@@*.    =*-*@@@@@@@@",
-"@@M*=:-*.        .:@@@**#@M:   :##=M@@@@@@@@",
+"@@MM=:-*.        .:@@@**#@M:   :##=M@@@@@@@@",
 
 };
 
@@ -83,11 +85,11 @@ void set_uptime(char* new_uptime){strcopy(new_uptime, uptime);}
 
 
 
-const char* username = "billie-bytes@portfolio\n";
-const char* OS = "BytesOS v1.6.7\n";
-const char* host = "Ouran H.C. 67-ecc\n";
-const char* kernel = "6.7.0-69-unique\n";
-const char* shell = "bush 6.7.1\n";
+const char* username = C_WHITE "billie-bytes@portfolio\n" C_RESET;
+const char* OS = C_WHITE "BytesOS v1.6.7\n" C_RESET;
+const char* host = C_WHITE "Ouran H.C. 67-ecc\n" C_RESET;
+const char* kernel = C_WHITE "6.7.0-69-unique\n" C_RESET;
+const char* shell = C_WHITE "bush 6.7.1\n" C_RESET;
 char* get_frame(){
     generate_random_square();
     
@@ -103,7 +105,7 @@ char* get_frame(){
         for(int j = 0; j < COL_LENGTH; j++){
             char c[2];
             c[1] = '\0';
-            if(logo_mask[i][j]=='+'||logo_mask[i][j]=='@') {
+            if(logo_mask[i][j]=='+'||logo_mask[i][j]=='@'||logo_mask[i][j]=='M'||logo_mask[i][j]=='#') {
                 c[0] = random_square[i][j];
             } else {
                 c[0] = logo_mask[i][j];
@@ -128,68 +130,68 @@ char* get_frame(){
                 string_add(frame_buffer, host); 
                 break;
             case 4: 
-                string_add(frame_buffer, "Kernel: "); 
+                string_add(frame_buffer,"Kernel: "); 
                 string_add(frame_buffer, kernel); 
                 break;
             case 5: 
-                string_add(frame_buffer, "Uptime: ");
+                string_add(frame_buffer,  "Uptime: "C_WHITE);
                 string_add(frame_buffer, uptime);
-                string_add(frame_buffer, "\n");
+                string_add(frame_buffer, "\n" C_RESET);
                 break;
             case 6: 
-                string_add(frame_buffer, "Packages: ");
+                string_add(frame_buffer,  "Packages: "C_WHITE);
                 num_buf[0] = '\0';
                 itoa(num_buf, get_file_count());
                 string_add(frame_buffer, num_buf);
-                string_add(frame_buffer, " (dpkg)\n");
+                string_add(frame_buffer, " (dpkg)\n" C_RESET);
                 break;
             case 7: 
-                string_add(frame_buffer, "Shell: ");
+                string_add(frame_buffer, "Shell: "C_WHITE);
                 string_add(frame_buffer, shell); 
                 break;
             case 8: 
-                string_add(frame_buffer, "Resolution: ");
+                string_add(frame_buffer, "Resolution: "C_WHITE);
                 num_buf[0] = '\0';
                 itoa(num_buf, res_width); string_add(frame_buffer, num_buf);
                 string_add(frame_buffer, "x");
                 num_buf[0] = '\0';
-                itoa(num_buf, res_height); string_add(frame_buffer, num_buf);
-                string_add(frame_buffer, "\n");
+                itoa(num_buf, res_height); string_add(frame_buffer,num_buf);
+                string_add(frame_buffer, "\n"C_RESET);
                 break;
             case 9: 
-                string_add(frame_buffer, "Terminal: ");
+                string_add(frame_buffer, "Terminal: "C_WHITE);
                 string_add(frame_buffer, terminal);
-                string_add(frame_buffer, "\n");
+                string_add(frame_buffer, "\n"C_RESET);
                 break;
             case 10:
-                string_add(frame_buffer, "CPU: ");
+                string_add(frame_buffer, "CPU count: "C_WHITE);
                 num_buf[0] = '\0';
                 itoa(num_buf, sys_cores); string_add(frame_buffer, num_buf);
-                string_add(frame_buffer, " Cores\n");
+                string_add(frame_buffer, " Cores\n"C_RESET);
                 break;
             case 11:
-                string_add(frame_buffer, "Memory: ");
+                string_add(frame_buffer, "Memory: "C_WHITE);
                 num_buf[0] = '\0';
                 itoa(num_buf, current_tab_memory_usage / 1024 / 1024); string_add(frame_buffer, num_buf);
                 string_add(frame_buffer, "MB / ");
                 num_buf[0] = '\0';
                 itoa(num_buf, sys_ram_gb * 1024); string_add(frame_buffer, num_buf);
-                string_add(frame_buffer, "MB\n");
+                string_add(frame_buffer, "MB\n"C_RESET);
                 break;
             case 12:
-                string_add(frame_buffer, "Disk: ");
+                string_add(frame_buffer, "Disk: "C_WHITE);
                 num_buf[0] = '\0';
                 itoa(num_buf, get_node_count()); string_add(frame_buffer, num_buf);
                 string_add(frame_buffer, " / ");
                 num_buf[0] = '\0';
                 itoa(num_buf, MAX_NODES); string_add(frame_buffer, num_buf);
-                string_add(frame_buffer, " (Nodes)\n");
+                string_add(frame_buffer, " (Nodes)\n"C_RESET);
                 break;
             case 13:
-                string_add(frame_buffer, "Battery: ");
+                string_add(frame_buffer, "Battery: "C_WHITE);
                 num_buf[0] = '\0';
                 itoa(num_buf, battery); string_add(frame_buffer, num_buf);
-                string_add(frame_buffer, "%\n");
+                string_add(frame_buffer, "%\n"C_RESET);
                 break;
             default:
                 string_add(frame_buffer, "\n");
