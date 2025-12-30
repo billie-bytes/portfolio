@@ -3,13 +3,14 @@ CC = clang
 
 # Compiler Flags:
 # --target=wasm32: Target WebAssembly
-# -nostdlib: Don't link against standard libraries (we are baremetal)
+# -nostdlib: No std libraries
 # -Wl,--no-entry: No main() function required
 # -Wl,--export=...: Explicitly export the functions JavaScript needs
-# -Wl,--allow-undefined: Allow symbols to be unresolved (useful during dev, remove for strictness)
+# -Wl,--allow-undefined: Allow symbols to be unresolved
 CFLAGS = --target=wasm32 -O3 -nostdlib \
      -Wl,--no-entry \
-	 -Wl,--export=get_g_input_buffer \
+     -Wl,--export=get_g_input_buffer \
+     -Wl,--export=get_g_output_buffer \
      -Wl,--export=get_frame \
      -Wl,--export=set_window_width \
      -Wl,--export=set_window_height \
@@ -21,6 +22,9 @@ CFLAGS = --target=wasm32 -O3 -nostdlib \
      -Wl,--export=set_system_battery \
      -Wl,--export=set_locale \
      -Wl,--export=set_uptime \
+     -Wl,--export=init_system \
+     -Wl,--export=exec_cmd \
+     -Wl,--export=get_hexdump_ptr \
      -Wl,--allow-undefined \
      -Wall -Wextra \
      -Wl,--initial-memory=131072 \

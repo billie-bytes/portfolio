@@ -1,8 +1,6 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
-#include "utils.h"
-
 #define FS_FILE 6767
 #define FS_FOLDER 420
 #define MAX_NODES 100

@@ -11,6 +11,10 @@
 #define FALSE 0
 #endif
 
+#ifndef NULL
+#define NULL (void*)0
+#endif
+
 typedef unsigned long size_t;
 typedef int bool;
 /**
@@ -20,7 +24,19 @@ typedef int bool;
  * @param str2 
  * @return 1 if equal, 0 if not equal
  */
-int streq(const char* str1, const char* str2);
+bool streq(const char* str1, const char* str2);
+
+/**
+ * @brief Compares string up to a certain number of characters
+ * If any of the string ends before the specified amount, returns 0
+ * immediatelys
+ * 
+ * @param str1 
+ * @param str2 
+ * @param num 
+ * @return 1 if equal, 0 if not equal
+ */
+bool strneq(const char* str1, const char* str2, int num);
 
 /**
  * @brief copies a string to another buffer
@@ -89,6 +105,22 @@ void itoa(char* buffer, int number);
 
 
 /**
+ * @brief Converts hex format string (e.g. 0xA) into unsigned integer
+ * 
+ * @param str 
+ * @return unsigned int 
+ */
+unsigned int htoi(const char* str);
+
+/**
+ * @brief Changes int into hex string
+ * 
+ * @param buffer 
+ * @param number 
+ */
+void itoh(char* buffer, int number);
+
+/**
  * @brief Sets the first num bytes of the block of memory pointed by ptr to the specified value
  */
 void* memset(void* ptr, int value, size_t num);
@@ -98,6 +130,14 @@ void* memset(void* ptr, int value, size_t num);
  * @brief Copies num bytes from src to dst
  */
 void* memcpy(void* dst, const void* src, size_t num);
+
+/**
+ * @brief Get the next word separated by space in a string
+ * 
+ * @param str A string where str[0] is NOT a space
+ * @return Returns the pointer to the next word. If there is no next word returns nullptr
+ */
+char* get_next_word(char* str);
 
 #endif
 

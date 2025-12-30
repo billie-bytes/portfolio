@@ -1,11 +1,9 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
-#include "shell.h"
-#include "filesystem.h"
-#include "session.h"
 
-#define GLOBAL_INPUT_BUFFER_SIZE 4096
+
+#define GLOBAL_BUFFER_SIZE 4096
 
 /**
  * Technically a lot of the functions below
@@ -23,6 +21,38 @@
  */
 char* get_g_input_buffer();
 
+/**
+ * @brief Get the pointer to the output buffer (accessed by Javascript)
+ * 
+ * @return Pointer to the global output buffer
+ */
+char* get_g_output_buffer();
+
+/**
+ * @brief Get the hexdump ptr for viewing
+ * 
+ * @return Pointer to whatever address is specified by hexdump_ptr
+ */
+void* get_hexdump_ptr();
+
+/**
+ * @brief Set the hexdump ptr object
+ * 
+ * @param address The new address that proceeds to be viewed
+ */
+void set_hexdump_ptr(int address);
+
+/**
+ * @brief Executes cmd from the front end
+ * 
+ * @param cmd The command given (in string)
+ */
+void exec_cmd();
+
+/**
+ * @brief Initializes all that needs initializing :p
+ */
+void init_system();
 
 
 
