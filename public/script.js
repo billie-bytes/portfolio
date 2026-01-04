@@ -133,9 +133,6 @@ function updateFrequentStats(){
 function updateOnceStats(){
     Module._set_window_width(window.screen.width);
     Module._set_window_height(window.screen.height);
-    let safeUserAgent = navigator.userAgent.substring(0, 63);
-    let ptr = writeStringToMemory(safeUserAgent);
-    // Module._set_terminal(ptr);
     if(navigator.hardwareConcurrency) Module._set_system_cores(navigator.hardwareConcurrency);
     if(navigator.deviceMemory) Module._set_system_ram(navigator.deviceMemory);
     writeStringToMemory(navigator.language.substring(0, 31));
@@ -345,7 +342,6 @@ async function boot() {
         Module._set_terminal = exports.set_terminal;
         Module._set_system_cores = exports.set_system_cores;
         Module._set_system_ram = exports.set_system_ram;
-        Module._set_locale = exports.set_locale;
         Module._set_memory_usage = exports.set_memory_usage;
         Module._set_system_battery = exports.set_system_battery;
         Module._get_frame = exports.get_frame;
@@ -386,7 +382,7 @@ async function boot() {
             }, 500);
         }, 500);
 
-        appendToTerminal("Kernel loaded successfully.");
+        // appendToTerminal("Kernel loaded successfully.");
 
     } catch (err) {
         console.error("Boot failed:", err);

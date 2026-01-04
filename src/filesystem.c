@@ -1,5 +1,6 @@
 #include "filesystem.h"
 #include "utils.h"
+#include "content.h"
 
 FS_node node_pool[MAX_NODES];
 int node_count = 0;
@@ -13,7 +14,7 @@ FS_node* fs_get_node_from_id(int id) {
     if (id < 0 || id >= node_count) return NULL;
     return &node_pool[id];
 }
-
+ 
 FS_node* alloc_node() {
     if (node_count >= MAX_NODES) return (FS_node*)NULL; // Out of memory
     ++node_count;
@@ -24,10 +25,13 @@ FS_node* alloc_node() {
 void fs_initialize(){
     FS_node* root = alloc_node();
     strcopy(".",root->name);
+    root->type = FS_FOLDER;
     root->next = NULL;
     root->next_inside = NULL;
     root->parent = root;
     root->content = NULL;
+
+    init_content();
 }
 
 FS_node* new_dir(FS_node* parent, char* dir_name){
@@ -53,19 +57,21 @@ FS_node* new_dir(FS_node* parent, char* dir_name){
     return dir;
 }
 
-FS_node* new_file(FS_node* parent, char* file_name, void* content_buffer){
+FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer){
+    if (parent == NULL) return NULL;
     FS_node* p = parent->next_inside;
     FS_node* last_node = NULL;
     while(p!=NULL){
-        if(p->next==NULL){
-            last_node = p;
-        }
+        last_node = p;
         p = p->next;
     }
     
     FS_node* file = alloc_node();
+    if(file==NULL) return NULL;
+
     if(last_node!=NULL) last_node->next = file;
     else parent->next_inside = file;
+    
     strcopy(file_name,file->name);
     file->next = NULL;
     file->next_inside = NULL;
@@ -100,3 +106,9 @@ int get_file_count(){
     }
     return file_nums;
 }
+
+// int write(FS_request request){
+//     if(request.type==FS_FOLDER){
+//         new_dir
+//     }
+// }

@@ -39,14 +39,14 @@ int cmd_ls(Session current_session) {
     return 0;
 }
 
-int cmd_cd(Session current_session, char* path) {
+int cmd_cd(Session* current_session, char* path) {
     g_output_buffer[0] = '\0';
 
     if (streq(path, ".")) {
         return 0;
     }
 
-    FS_node* cwd = fs_get_node_from_id(current_session.current_dir_id);
+    FS_node* cwd = fs_get_node_from_id(current_session->current_dir_id);
     if (cwd == NULL) return 1;
 
     if (streq(path, "..")) {
@@ -54,32 +54,26 @@ int cmd_cd(Session current_session, char* path) {
             return 0; 
         }
 
-        Session* active = get_active_session();
-        if (active != NULL) {
-            active->current_dir_id = fs_get_id_from_node(cwd->parent);
-        }
+        current_session->current_dir_id = fs_get_id_from_node(cwd->parent);
         return 0;
     }
 
     FS_node* target = get_file_node(cwd, path);
     
     if (target == NULL) {
-        string_add(g_output_buffer, "cd: no such file or directory: ");
+        string_add(g_output_buffer, "No such file or directory: ");
         string_add(g_output_buffer, path);
         return 2;
     }
 
     if (target->type != FS_FOLDER) {
-        string_add(g_output_buffer, "cd: not a directory: ");
+        string_add(g_output_buffer, "Not a directory: ");
         string_add(g_output_buffer, path);
         return 1;
     }
 
-    Session* active = get_active_session();
-    if (active != NULL) {
-        active->current_dir_id = fs_get_id_from_node(target);
-    }
-
+    
+    current_session->current_dir_id = fs_get_id_from_node(target);
     return 0;
 }
 
@@ -115,8 +109,11 @@ void cmd_whoami() {
 }
 
 
-int cmd_chxdmp(int address){
+int cmd_chexdmp(int address){
     if(address<0){
+        return 1; //invalid address
+    }
+    if(address>MAX_CHEX_ADDRESS-1000){
         return 1; //invalid address
     }
 

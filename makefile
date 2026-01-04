@@ -20,7 +20,6 @@ CFLAGS = --target=wasm32 -O3 -nostdlib \
      -Wl,--export=set_system_ram \
      -Wl,--export=set_memory_usage \
      -Wl,--export=set_system_battery \
-     -Wl,--export=set_locale \
      -Wl,--export=set_uptime \
      -Wl,--export=init_system \
      -Wl,--export=exec_cmd \
@@ -35,14 +34,14 @@ SOURCE_DIR = src
 OUTPUT_DIR = public
 TARGET = $(OUTPUT_DIR)/kernel.wasm
 
-# List all your C source files here
-# Added shell.c so the command logic is included in the build
+# List of all C source files
 SRC = $(SOURCE_DIR)/kernel.c \
       $(SOURCE_DIR)/filesystem.c \
       $(SOURCE_DIR)/neofetch.c \
       $(SOURCE_DIR)/session.c \
       $(SOURCE_DIR)/utils.c \
-      $(SOURCE_DIR)/shell.c
+      $(SOURCE_DIR)/shell.c \
+      $(SOURCE_DIR)/content.c
 
 # --- Rules ---
 

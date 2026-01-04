@@ -2,6 +2,7 @@
 #define SHELL_H
 
 #define MAX_ARGS 6
+#define MAX_CHEX_ADDRESS 131072
 
 
 #include "session.h"
@@ -27,7 +28,7 @@ int cmd_ls(Session current_session);
  * @param path The path of the directory
  * @return 0 if success, 1 if path is not a folder, 2 if path not found
  */
-int cmd_cd(Session current_session, char* path);
+int cmd_cd(Session* current_session, char* path);
 
 
 /**
@@ -51,6 +52,6 @@ void cmd_whoami();
  * @param address 
  * @return 0 Success, 1 invalid address
  */
-int cmd_chxdmp(int address);
+int cmd_chexdmp(int address);
 
 #endif

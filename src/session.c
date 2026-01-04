@@ -1,5 +1,11 @@
 #include "session.h"
 
+/**
+ * Personal note: 
+ * This whole feature is kinda unused right now.
+ * Might implement in the future for multi-terminal.
+ */
+
 Session sessions[MAX_SESSIONS];
 int session_count = 0;
 

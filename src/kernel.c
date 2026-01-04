@@ -80,6 +80,11 @@ void exec_cmd(){
     else if (strneq(&g_input_buffer[i], "ls", 2)) {
         cmd_ls(curr_sess);
     }
+
+    else if (strneq(&g_input_buffer[i], "cd", 2)) {
+        parse_arguments();
+        cmd_cd(&curr_sess, g_arguments_buffer[0]);
+    }
     else if(strneq(&g_input_buffer[i], "chexdmp", 7)){
             parse_arguments();
             if(args_num == 0){
@@ -89,10 +94,10 @@ void exec_cmd(){
             else{
 
                 if(g_arguments_buffer[0][0] == '0' && (g_arguments_buffer[0][1] == 'x' || g_arguments_buffer[0][1] == 'X')){
-                    cmd_chxdmp(htoi(g_arguments_buffer[0]));
+                    cmd_chexdmp(htoi(g_arguments_buffer[0]));
                 }
                 else{
-                    cmd_chxdmp(atoi(g_arguments_buffer[0]));
+                    cmd_chexdmp(atoi(g_arguments_buffer[0]));
                 }
             }
         }
