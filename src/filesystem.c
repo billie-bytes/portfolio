@@ -57,7 +57,7 @@ FS_node* new_dir(FS_node* parent, char* dir_name){
     return dir;
 }
 
-FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer){
+FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer, int file_type){
     if (parent == NULL) return NULL;
     FS_node* p = parent->next_inside;
     FS_node* last_node = NULL;
@@ -76,13 +76,13 @@ FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer){
     file->next = NULL;
     file->next_inside = NULL;
     file->parent = parent;
-    file->type = FS_FILE;
+    file->type = file_type;
     file->content = content_buffer;
 
     return file;
 }
 
-FS_node* get_file_node(FS_node* parent, char* filename){
+FS_node* get_file_node(FS_node* parent, const char* filename){
     FS_node* p = parent->next_inside;
     while(p!=NULL){
         if(streq(p->name, filename)){

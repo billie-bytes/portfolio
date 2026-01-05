@@ -136,7 +136,6 @@ function updateOnceStats(){
     if(navigator.hardwareConcurrency) Module._set_system_cores(navigator.hardwareConcurrency);
     if(navigator.deviceMemory) Module._set_system_ram(navigator.deviceMemory);
     writeStringToMemory(navigator.language.substring(0, 31));
-    Module._set_locale(ptr);
 }
 
 
@@ -257,10 +256,7 @@ async function handleCommand(cmd) {
     commandHistory.push(trimmedCmd);
     historyIndex = commandHistory.length;
 
-    if (trimmedCmd === 'clear') {
-        terminalOutputDiv.innerHTML = '';
-    } 
-    else if (Module._exec_cmd) {
+    if (Module._exec_cmd) {
         writeStringToMemory(trimmedCmd);
         Module._exec_cmd();
         const outputPtr = get_g_output_buffer();
@@ -326,9 +322,18 @@ async function boot() {
         const buffer = await response.arrayBuffer();
 
 
+        const imports = {
+            env: {
+                clear: () =>{
+                    terminalOutputDiv.innerHTML = '';
+                }
+            }
+        };
+
         loadingStatus.textContent = "INSTANTIATING MODULE...";
-        const { instance } = await WebAssembly.instantiate(buffer);
+        const { instance } = await WebAssembly.instantiate(buffer, imports);
         const exports = instance.exports;
+        
 
         memory = exports.memory;
         init_system = exports.init_system;
@@ -345,7 +350,8 @@ async function boot() {
         Module._set_memory_usage = exports.set_memory_usage;
         Module._set_system_battery = exports.set_system_battery;
         Module._get_frame = exports.get_frame;
-        Module._set_uptime = exports.set_uptime
+        Module._set_uptime = exports.set_uptime;
+        Module._kernel_tick = exports.kernel_tick;
         
 
         Module._exec_cmd = exports.exec_cmd;
@@ -365,6 +371,19 @@ async function boot() {
         
         // Foreground loop
         setInterval(() => {
+            Module._kernel_tick();
+            const outputPtr = get_g_output_buffer();
+            const outputStr = readStringFromMemory(outputPtr);
+            if(outputStr.length > 0) {
+                // Using innerHTML here allows the C backend to send <br> or ANSI later
+                const outDiv = document.createElement('div');
+                let formatted = parseAnsiColors(outputStr);
+                formatted = formatted.replace(/\n/g, '<br>');
+                // For now, just handle newlines. Later apply parseAnsiColors here.
+                outDiv.innerHTML = formatted;
+                terminalOutputDiv.appendChild(outDiv);
+            }
+            
             renderNeofetchLoop();
             renderHexDump();
         }, 50);

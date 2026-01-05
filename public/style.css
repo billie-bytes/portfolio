@@ -57,6 +57,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow-y: auto; 
+    overflow-x: hidden;
     min-height: 0;
 }
 
@@ -74,8 +75,11 @@ body {
 
 #terminal-output {
     flex-grow: 1;
-    white-space: pre-wrap;
+    white-space: pre-wrap;       /* Preserves /n but wraps text */
+    word-break: normal;
+    overflow-wrap: break-word;     /* Ensures it wraps even if no spaces exist */
     margin-bottom: 10px;
+    overflow-x: hidden;
 }
 
 .input-line {

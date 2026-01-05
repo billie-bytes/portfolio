@@ -74,7 +74,7 @@ FS_node* new_dir(FS_node* parent, char* dir_name);
  * @param content_buffer 
  * @return FS_node* 
  */
-FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer);
+FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer, int file_type);
 
 /**
  * @brief Returns the node of the file specified by the filename
@@ -83,7 +83,7 @@ FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer);
  * @param filename The name of the file
  * @return Returns a pointer to the content buffer pointer of the file. Returns NULL if file not found
  */
-FS_node* get_file_node(FS_node* parent, char* filename);
+FS_node* get_file_node(FS_node* parent,const char* filename);
 
 /**
  * @brief Get the number of used node

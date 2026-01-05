@@ -54,6 +54,12 @@ void exec_cmd();
  */
 void init_system();
 
+/**
+ * @brief A kernel timer where every tick it runs a user program
+ * This function is also called by Javascript
+ */
+void kernel_tick();
+
 
 
 #endif

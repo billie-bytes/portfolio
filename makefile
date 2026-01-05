@@ -24,6 +24,7 @@ CFLAGS = --target=wasm32 -O3 -nostdlib \
      -Wl,--export=init_system \
      -Wl,--export=exec_cmd \
      -Wl,--export=get_hexdump_ptr \
+     -Wl,--export=kernel_tick \
      -Wl,--allow-undefined \
      -Wall -Wextra \
      -Wl,--initial-memory=131072 \

@@ -54,4 +54,6 @@ void cmd_whoami();
  */
 int cmd_chexdmp(int address);
 
+void cmd_clear();
+
 #endif
