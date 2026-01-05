@@ -80,7 +80,7 @@ function parseAnsiColors(str) {
 function waitForBackground() {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        img.src = 'background.jpg';
+        img.src = 'background.webp';
         
         if (img.complete) {
             resolve();
@@ -371,6 +371,10 @@ async function boot() {
         
         // Foreground loop
         setInterval(() => {
+
+            /*This section is for kernel tick but for now it appends
+            text to terminal like any other command (which is wrong
+            for animations as it will push stuff below)*/
             Module._kernel_tick();
             const outputPtr = get_g_output_buffer();
             const outputStr = readStringFromMemory(outputPtr);
