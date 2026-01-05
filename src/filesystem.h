@@ -3,7 +3,9 @@
 
 #define FS_FILE 6767
 #define FS_FOLDER 420
+#define FS_PROGRAM 6969
 #define MAX_NODES 100
+#define ROOT_ID 0
 
 #ifndef NULL
 #define NULL ((void*)0)
@@ -27,6 +29,12 @@ typedef struct FS_node {
     void* content;
 } FS_node;
 
+typedef struct FS_request{
+    int parent_id;
+    char name[32];
+    int type;
+    void* content; //NULL if directory
+} FS_request;
 
 /**
  * @brief Converts a Node Pointer to its ID (Array Index)
@@ -66,7 +74,7 @@ FS_node* new_dir(FS_node* parent, char* dir_name);
  * @param content_buffer 
  * @return FS_node* 
  */
-FS_node* new_file(FS_node* parent, char* file_name, void* content_buffer);
+FS_node* new_file(FS_node* parent, const char* file_name, void* content_buffer, int file_type);
 
 /**
  * @brief Returns the node of the file specified by the filename
@@ -75,7 +83,7 @@ FS_node* new_file(FS_node* parent, char* file_name, void* content_buffer);
  * @param filename The name of the file
  * @return Returns a pointer to the content buffer pointer of the file. Returns NULL if file not found
  */
-FS_node* get_file_node(FS_node* parent, char* filename);
+FS_node* get_file_node(FS_node* parent,const char* filename);
 
 /**
  * @brief Get the number of used node
@@ -91,5 +99,12 @@ int get_node_count();
  */
 int get_file_count();
 
+// /**
+//  * @brief Writes a directory or a file into the filesystem
+//  * 
+//  * @param request Request
+//  * @return Error codes: 
+//  */
+// int write(FS_request request);
 
 #endif

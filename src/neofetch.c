@@ -79,7 +79,6 @@ void set_system_cores(int cores){sys_cores = cores;}
 void set_system_ram(int gb){sys_ram_gb = gb;}
 void set_memory_usage(int memory){current_tab_memory_usage = memory;}
 void set_system_battery(int sbattery){battery = sbattery;}
-void set_locale(char* new_locale){strcopy(new_locale, sys_locale);}
 void set_uptime(char* new_uptime){strcopy(new_uptime, uptime);}
 
 
