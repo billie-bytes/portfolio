@@ -54,6 +54,18 @@ void cmd_whoami();
  */
 int cmd_chexdmp(int address);
 
+/**
+ * @brief Clears the main terminal
+ */
 void cmd_clear();
+
+/**
+ * @brief Opens a txt file (for now)
+ * 
+ * @param current_session 
+ * @param path 
+ * @return int 
+ */
+int cmd_cat(Session current_session, const char* path);
 
 #endif

@@ -20,7 +20,8 @@ void cmd_help(){
     string_add(g_output_buffer,C_WHITE"  cd      "C_RESET"- Changes working directory\n");
     string_add(g_output_buffer,C_WHITE"  ls      "C_RESET"- Lists files and directories in current working directory\n");
     string_add(g_output_buffer,C_WHITE"  pwd     "C_RESET"- Prints current working directory\n");
-    string_add(g_output_buffer,C_WHITE"  chexdmp "C_RESET"- Changes the memory offset of the hexdump live-view\n\n");
+    string_add(g_output_buffer,C_WHITE"  chexdmp "C_RESET"- Changes the memory offset of the hexdump live-view\n");
+    string_add(g_output_buffer,C_WHITE"  cat     "C_RESET"- Opens the content of a file as string\n\n");
 }
 
 
@@ -132,12 +133,14 @@ int cmd_chexdmp(int address){
     string_add(g_output_buffer, "Points of interest:\n"C_WHITE);
     itoh_buff[0]='\0';
     itoh(itoh_buff, (int)g_input_buffer);
+    string_add(g_output_buffer,"0x");
     string_add(g_output_buffer, itoh_buff);
     string_add(g_output_buffer, C_RESET);
     string_add(g_output_buffer, " (input buffer)\n");
     itoh_buff[0]='\0';
     itoh(itoh_buff, (int)g_output_buffer);
     string_add(g_output_buffer,C_WHITE);
+    string_add(g_output_buffer,"0x");
     string_add(g_output_buffer, itoh_buff);
     string_add(g_output_buffer, C_RESET);
     string_add(g_output_buffer, " (output buffer)\n\n");
@@ -148,7 +151,17 @@ void cmd_clear(){
     clear();
 }
 
-// cmd_cat(Session current_session, const char* path){
-//     FS_node* parent = fs_get_node_from_id(current_session.current_dir_id);
+int cmd_cat(Session current_session, const char* path){
+    FS_node* parent = fs_get_node_from_id(current_session.current_dir_id);
+    if(parent==NULL) return 1;
 
-// }
+    FS_node* file = get_file_node(parent, path);
+    if(file==NULL) return 2;
+    if(file->type==FS_FOLDER) return 3;
+    if(file->content==NULL) return 4;
+
+    g_output_buffer[0] = '\0';
+    string_add(g_output_buffer,file->content);
+
+    return 0;
+}
