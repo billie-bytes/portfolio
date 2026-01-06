@@ -167,16 +167,16 @@ void exec_cmd(){
                 }
             }
     }
-    // else if(strneq(&g_input_buffer[i], "cat", 3)){
-    //     parse_arguments();
-    //     if(args_num == 0){
-    //         g_output_buffer[0] = '\0';
-    //         string_add(g_output_buffer, "cat: must have 1 argument specifying the file");
-    //     }
-    //     else{
-            
-    //     }
-    // }
+    else if(strneq(&g_input_buffer[i], "cat", 3)){
+        parse_arguments();
+        if(args_num == 0){
+            g_output_buffer[0] = '\0';
+            string_add(g_output_buffer, "cat: must have 1 argument specifying the file");
+        }
+        else{
+            cmd_cat(curr_sess, g_arguments_buffer[0]);
+        }
+    }
     else if(strneq(&g_input_buffer[i], "clear", 5)){
         cmd_clear();
     }

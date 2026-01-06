@@ -405,8 +405,7 @@ async function boot() {
             }, 500);
         }, 500);
 
-        // appendToTerminal("Kernel loaded successfully.");
-
+        handleCommand("cat intro.txt");
     } catch (err) {
         console.error("Boot failed:", err);
         appendToTerminal("CRITICAL ERROR: Could not load kernel.wasm");
