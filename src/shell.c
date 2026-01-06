@@ -133,12 +133,14 @@ int cmd_chexdmp(int address){
     string_add(g_output_buffer, "Points of interest:\n"C_WHITE);
     itoh_buff[0]='\0';
     itoh(itoh_buff, (int)g_input_buffer);
+    string_add(g_output_buffer,"0x");
     string_add(g_output_buffer, itoh_buff);
     string_add(g_output_buffer, C_RESET);
     string_add(g_output_buffer, " (input buffer)\n");
     itoh_buff[0]='\0';
     itoh(itoh_buff, (int)g_output_buffer);
     string_add(g_output_buffer,C_WHITE);
+    string_add(g_output_buffer,"0x");
     string_add(g_output_buffer, itoh_buff);
     string_add(g_output_buffer, C_RESET);
     string_add(g_output_buffer, " (output buffer)\n\n");
