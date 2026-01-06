@@ -73,6 +73,10 @@ body {
     line-height: 1.4;
 }
 
+#terminal-output::-webkit-scrollbar {
+    display: none;
+}
+
 #terminal-output {
     flex-grow: 1;
     white-space: pre-wrap;       /* Preserves /n but wraps text */
@@ -80,6 +84,9 @@ body {
     overflow-wrap: break-word;     /* Ensures it wraps even if no spaces exist */
     margin-bottom: 10px;
     overflow-x: hidden;
+    
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .input-line {
