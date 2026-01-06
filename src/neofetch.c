@@ -3,6 +3,10 @@
 #include "filesystem.h"
 #include "text_styling.h"
 
+
+#define BLOCK_CHAR "\xE2\x96\x88\xE2\x96\x88\xE2\x96\x88" 
+#define COL_BLK(code) "\x1b[" #code "m" BLOCK_CHAR "\x1b[0m "
+
 char random_square[ROW_LENGTH][COL_LENGTH];
 const char* SAFE_CHARS = "!123456789:;<=>?@ACDEFGHIJKLMNOPQRSTUVWY]^acdefghijklmnopqrstuvwyz{|}";
 const int SAFE_LEN = 69;
@@ -16,19 +20,16 @@ static int sys_cores = 1;
 static int sys_ram_gb = 4;
 static int current_tab_memory_usage = 0;
 static int battery = 67;
-static char sys_locale[64] = "en_AG.UTF-8";
 static char uptime[64] = "67 years";
 
 
 
 // Variables not set by Javascript
-static int disk = 4*sizeof(FS_node); //Placeholder, will be changed after putting in the portfolio content
 static int max_disk = MAX_NODES*sizeof(FS_node);
 static int packages = 5; //Also placeholder
 
 
 static char frame_buffer[8192];
-static int initialized = TRUE;
 
 static char logo_mask[ROW_LENGTH][COL_LENGTH+1] = {
 
@@ -180,11 +181,11 @@ char* get_frame(){
             case 12:
                 string_add(frame_buffer, "Disk: "C_WHITE);
                 num_buf[0] = '\0';
-                itoa(num_buf, get_node_count()); string_add(frame_buffer, num_buf);
+                itoa(num_buf, (get_node_count()*sizeof(FS_node))); string_add(frame_buffer, num_buf);
                 string_add(frame_buffer, " / ");
                 num_buf[0] = '\0';
-                itoa(num_buf, MAX_NODES); string_add(frame_buffer, num_buf);
-                string_add(frame_buffer, " (Nodes)\n"C_RESET);
+                itoa(num_buf, max_disk); string_add(frame_buffer, num_buf);
+                string_add(frame_buffer, " (Bytes)\n"C_RESET);
                 break;
             case 13:
                 string_add(frame_buffer, "Battery: "C_WHITE);
@@ -192,6 +193,13 @@ char* get_frame(){
                 itoa(num_buf, battery); string_add(frame_buffer, num_buf);
                 string_add(frame_buffer, "%\n"C_RESET);
                 break;
+            case 16:
+                string_add(frame_buffer, COL_BLK(36));
+                string_add(frame_buffer, COL_BLK(34));
+                string_add(frame_buffer, COL_BLK(35));
+                string_add(frame_buffer, "\n");
+                break;
+
             default:
                 string_add(frame_buffer, "\n");
 
