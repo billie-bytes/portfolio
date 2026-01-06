@@ -181,6 +181,7 @@ void exec_cmd(){
         cmd_clear();
     }
     else if(strneq(&g_input_buffer[i], "./",2)){
+        parse_arguments();
         const char* program_name = &g_input_buffer[i+2];
         exec_program(program_name);
     }

@@ -6,7 +6,12 @@
 #define C_GREEN  "\x1b[32m"
 #define C_YELLOW "\x1b[33m"
 #define C_BLUE   "\x1b[34m"
-#define C_WHITE    "\x1b[35m"
+#define C_WHITE  "\x1b[35m"
 #define C_CYAN   "\x1b[36m"
+
+#define L_GITHUB "\x1b[Lghm"
+#define L_LINKED "\x1b[Llnm"
+#define L_EMAIL  "\x1b[Lmlm"
+#define L_RESET  "\x1b[Lem"
 
 #endif
