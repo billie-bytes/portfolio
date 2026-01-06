@@ -184,6 +184,9 @@ void exec_cmd(){
         const char* program_name = &g_input_buffer[i+2];
         exec_program(program_name);
     }
+    else if(strneq(&g_input_buffer[i], "pwd",3)){
+        cmd_pwd(curr_sess);
+    }
 
     else {
         char error_msg[512];

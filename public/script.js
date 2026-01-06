@@ -7,12 +7,14 @@ let batteryManager = null;
 // UI References
 const terminalOutputDiv = document.getElementById('terminal-output');
 const terminalInput = document.getElementById('terminal-input');
+const promptSpan = document.getElementById('prompt');
 // Reference to the specific PRE tag in the top-right panel
 const neofetchPre = document.getElementById('neofetch-output');
 
 // Terminal State (For the main interactive terminal)
 const commandHistory = [];
 let historyIndex = -1;
+let currentPath = "/";
 
 
 const memoryPanel = document.getElementById('status-panel-2'); // 3rd panel
@@ -235,6 +237,10 @@ function waitForClock() {
 
 // MAIN INTERACTIVE TERMINAL LOGIC
 
+function updateInputPrompt() {
+    // Updates the visual prompt next to the input box
+    promptSpan.innerHTML = `billie-bytes@portfolio:<span style="color: #bd93f9">${currentPath}</span>$`;
+}
 
 function scrollToBottom() {
     const terminalMain = document.getElementById('terminal-output');
@@ -248,9 +254,10 @@ function scrollToBottom() {
 function appendToTerminal(text, isCommand = false) {
     const div = document.createElement('div');
     if (isCommand) {
-         div.innerHTML = `<span class="prompt">billie-bytes@portfolio:~$</span> <span style="color: #ffffffff">${text}</span>`;
+         // billie-bytes@portfolio:path$
+         div.innerHTML = `
+<span class="prompt">billie-bytes@portfolio:<span style="color: #bd93f9">${currentPath}</span>$</span> <span style="color: #ffffffff">${text}</span>`;
     } else {
-         // For now, simple text. Later we will use ANSI parser here too for ls colors
          div.textContent = text; 
     }
     terminalOutputDiv.appendChild(div);
@@ -270,14 +277,26 @@ async function handleCommand(cmd) {
         Module._exec_cmd();
         const outputPtr = get_g_output_buffer();
         const outputStr = readStringFromMemory(outputPtr);
+
+        const isCd = trimmedCmd === 'cd' || trimmedCmd.startsWith('cd ');
+
+
+
         if(outputStr.length > 0) {
-             // Using innerHTML here allows the C backend to send <br> or ANSI later
-             const outDiv = document.createElement('div');
-             let formatted = parseAnsiColors(outputStr);
-             formatted = formatted.replace(/\n/g, '<br>');
-             // For now, just handle newlines. Later apply parseAnsiColors here.
-             outDiv.innerHTML = formatted;
-             terminalOutputDiv.appendChild(outDiv);
+            if(isCd && outputStr.trim().startsWith('/')){
+                currentPath = outputStr.trim();
+                updateInputPrompt();
+            }
+            else{
+                // Using innerHTML here allows the C backend to send <br> or ANSI later
+                const outDiv = document.createElement('div');
+                let formatted = parseAnsiColors(outputStr);
+                formatted = formatted.replace(/\n/g, '<br>');
+                // For now, just handle newlines. Later apply parseAnsiColors here.
+                outDiv.innerHTML = formatted;
+                terminalOutputDiv.appendChild(outDiv);
+            }
+
         }
     } else {
         appendToTerminal(`Error: Kernel not loaded or exec_cmd missing.`);

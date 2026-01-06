@@ -60,6 +60,7 @@ int cmd_cd(Session* current_session, char* path) {
         }
 
         current_session->current_dir_id = fs_get_id_from_node(cwd->parent);
+        cmd_pwd(*current_session);
         return 0;
     }
 
@@ -79,6 +80,7 @@ int cmd_cd(Session* current_session, char* path) {
 
     
     current_session->current_dir_id = fs_get_id_from_node(target);
+    cmd_pwd(*current_session);
     return 0;
 }
 
