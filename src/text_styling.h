@@ -12,6 +12,14 @@
 #define L_GITHUB "\x1b[Lghm"
 #define L_LINKED "\x1b[Llnm"
 #define L_EMAIL  "\x1b[Lmlm"
+
+#define L_OS     "\x1b[Losm"
+#define L_NS     "\x1b[Lnsm"
+#define L_AC     "\x1b[Lacm"
+#define L_GD     "\x1b[Lgdm"
+#define L_PO     "\x1b[Lpom"
+
 #define L_RESET  "\x1b[Lem"
+
 
 #endif

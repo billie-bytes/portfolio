@@ -34,11 +34,13 @@ int cmd_ls(Session current_session) {
     FS_node* child = cwd->next_inside;
 
     while (child != NULL) {
+        string_add(g_output_buffer,C_WHITE);
         string_add(g_output_buffer, child->name);
         if (child->type == FS_FOLDER) {
             string_add(g_output_buffer, "/");
         }
-        string_add(g_output_buffer, "  ");
+        string_add(g_output_buffer,C_RESET);
+        string_add(g_output_buffer, "\n");
         child = child->next;
     }
     return 0;
